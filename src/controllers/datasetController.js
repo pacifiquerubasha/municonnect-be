@@ -1,7 +1,4 @@
 const axios = require("axios");
-const FormData = require("form-data");
-const fs = require("fs");
-const path = require("path");
 const Dataset = require("../models/Dataset");
 
 exports.createDataset = async (req, res) => {
@@ -10,7 +7,6 @@ exports.createDataset = async (req, res) => {
     numRows,
     numColumns,
     fileSize,
-    owner,
     fields,
     description,
     tags,
@@ -21,6 +17,8 @@ exports.createDataset = async (req, res) => {
     releaseDate,
     mainFile,
   } = req.body;
+
+  const owner = req.user.authId;
 
   try {
     const dataset = new Dataset({
@@ -52,7 +50,9 @@ exports.createDataset = async (req, res) => {
 
 exports.getMyDatasets = async (req, res) => {
   try {
-    const datasets = await Dataset.find({ owner: req.params.owner });
+    const owner = req.user.authId;
+
+    const datasets = await Dataset.find({ owner });
     res.status(200).json(datasets);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -111,7 +111,7 @@ exports.generateFileSummary = async (req, res) => {
       "http://localhost:8080/process_summary/",
       {
         file_name: fileName,
-        domain: dataset.domain
+        domain: dataset.domain,
       }
     );
 
@@ -129,3 +129,5 @@ exports.generateFileSummary = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+

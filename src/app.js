@@ -8,6 +8,8 @@ require('dotenv').config()
 
 const userRouter = require("./routes/users");
 const datasetRouter = require("./routes/datasets");
+const messagesRouter = require("./routes/messagesRoutes");
+const startupsRouter = require("./routes/startups");
 
 const app = express();
 
@@ -35,7 +37,8 @@ app.use("/images", express.static("uploads"));
 
 app.use("/api/users", userRouter);
 app.use("/api/datasets", datasetRouter);
-
+app.use("/api/messages", messagesRouter);
+app.use("/api/startups", startupsRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({
