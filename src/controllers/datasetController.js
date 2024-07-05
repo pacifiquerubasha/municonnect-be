@@ -59,17 +59,15 @@ exports.getMyDatasets = async (req, res) => {
   }
 };
 
-// Get all datasets
 exports.getAllDatasets = async (req, res) => {
   try {
-    const datasets = await Dataset.find();
+    const datasets = await Dataset.find({isPrivate:false});
     res.status(200).json(datasets);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Get a specific dataset by ID
 exports.getDataset = async (req, res) => {
   try {
     const dataset = await Dataset.findById(req.params.id);
@@ -82,7 +80,6 @@ exports.getDataset = async (req, res) => {
   }
 };
 
-// Update a specific dataset by ID
 exports.updateDataset = async (req, res) => {
   try {
     const updatedDataset = await Dataset.findByIdAndUpdate(
@@ -130,4 +127,72 @@ exports.generateFileSummary = async (req, res) => {
   }
 };
 
+exports.switchIsPrivate = async (req, res) => {
+  const { datasetId } = req.params;
 
+  try {
+    const dataset = await Dataset.findById(datasetId);
+
+    if (!dataset) {
+      return res.status(404).json({ message: "Dataset not found" });
+    }
+
+    dataset.isPrivate = !dataset.isPrivate;
+
+    await dataset.save();
+
+    res.status(200).json({
+      message: "Dataset privacy status updated successfully",
+      dataset,
+    });
+  } catch (error) {
+    console.error("Error switching dataset privacy status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.switchIsApproved = async (req, res) => {
+  const { datasetId } = req.params;
+
+  try {
+    const dataset = await Dataset.findById(datasetId);
+
+    if (!dataset) {
+      return res.status(404).json({ message: "Dataset not found" });
+    }
+
+    if (dataset.isApproved) {
+      dataset.reasonForRemoval = req.body.reasonForRemoval;
+    } else {
+      dataset.reasonForRemoval = "";
+    }
+    dataset.isApproved = !dataset.isApproved;
+
+    await dataset.save();
+
+    res.status(200).json({
+      message: "Dataset approval status updated successfully",
+      dataset,
+    });
+  } catch (error) {
+    console.error("Error switching dataset approval status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getPublicDatasets = async (req, res) => {
+  try {
+    const publicDatasets = await Dataset.find({
+      isPrivate: false,
+      isApproved: true,
+    });
+
+    res.status(200).json({
+      message: "Public datasets retrieved successfully",
+      datasets: publicDatasets,
+    });
+  } catch (error) {
+    console.error("Error retrieving public datasets:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

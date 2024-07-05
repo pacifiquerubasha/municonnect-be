@@ -27,7 +27,8 @@ const datasetSchema = new mongoose.Schema({
   rating: { type: Number, default: 0 },
   language: { type: String, required: true },
   isPrivate: { type: Boolean, default: false },
-  isApproved: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: true },
+  reasonForRemoval: { type: String },
   summary: { type: String },
 });
 

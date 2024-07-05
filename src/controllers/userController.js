@@ -143,3 +143,26 @@ exports.verifyUser = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {}
 };
+
+exports.banUser = async (req, res) => {
+  const { userId } = req.params;
+  const { reason } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isBanned.status = true;
+    user.isBanned.reason = reason;
+
+    await user.save();
+
+    res.status(200).json({ message: "User banned successfully", user });
+  } catch (error) {
+    console.error("Error banning user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

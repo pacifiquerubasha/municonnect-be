@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  authId: { type: String, required: true, unique: true},
+  authId: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
   bio: { type: String },
   profilePicture: { type: String },
   isVerified: { type: Boolean, default: false },
+  isBanned: {
+    status: { type: Boolean, default: false },
+    reason: { type: String },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

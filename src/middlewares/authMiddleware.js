@@ -10,6 +10,11 @@ const authMiddleware = async (req, res, next) => {
     if (!user) {
       throw new Error();
     }
+    
+    else if(user?.isBanned?.status){
+    	res.status(401).json({ message: "Your account has been banned. Please contact Support for help." });
+    }
+        
     req.user = user;
     next();
   } catch (error) {
