@@ -33,8 +33,6 @@ app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 
-app.use("/images", express.static("uploads"));
-
 app.use("/api/users", userRouter);
 app.use("/api/datasets", datasetRouter);
 app.use("/api/messages", messagesRouter);

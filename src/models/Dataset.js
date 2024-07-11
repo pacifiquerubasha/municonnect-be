@@ -30,6 +30,7 @@ const datasetSchema = new mongoose.Schema({
   isApproved: { type: Boolean, default: true },
   reasonForRemoval: { type: String },
   summary: { type: String },
+  sampleQuestions: [String],
 });
 
 module.exports = mongoose.model("Dataset", datasetSchema);
