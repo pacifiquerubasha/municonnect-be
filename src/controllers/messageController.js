@@ -51,7 +51,9 @@ exports.getSampleQuestions = async (req, res) => {
 
     if (!dataset) return res.status(404).json({ message: "Dataset not found" });
     else if (dataset.sampleQuestions?.length > 0)
-      return res.status(200).json(dataset.sampleQuestions);
+      return res.status(200).json({
+        questions: dataset.sampleQuestions,
+      });
 
     const response = await axios.post(
       `http://localhost:8080/sample-questions/`,
@@ -61,13 +63,12 @@ exports.getSampleQuestions = async (req, res) => {
     );
 
     if (response.data) {
-      if(response.data?.questions?.length === 4){
+      if (response.data?.questions?.length === 4) {
         dataset.sampleQuestions = response.data?.questions;
         await dataset.save();
       }
       res.status(200).json(response.data);
-    }
-    else res.status(400).json({ message: "Failed to get sample questions" });
+    } else res.status(400).json({ message: "Failed to get sample questions" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -113,14 +113,10 @@ exports.generateFileSummary = async (req, res) => {
     }
 
     const fileName = dataset.files.mainFile.split("/").pop();
-    const response = await axios.post(
-      "http://localhost:8080/process_summary/",
-      {
-        file_name: fileName,
-        domain: dataset.domain,
-      }
-    );
-
+    const response = await axios.post("http://localhost:8080/process_summary", {
+      file_name: fileName,
+      domain: dataset.domain,
+    });
     if (response.data) {
       dataset.summary = response.data.summary;
       await dataset.save();
@@ -128,9 +124,8 @@ exports.generateFileSummary = async (req, res) => {
         message: "Summary generated successfully",
         summary: response.data.summary,
       });
-    }
-
-    return res.status(400).json({ message: "Failed to generate summary" });
+    } else
+      return res.status(400).json({ message: "Failed to generate summary" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
