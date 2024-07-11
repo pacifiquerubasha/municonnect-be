@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const crypto = require("crypto");
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -86,7 +87,9 @@ exports.createUser = async (req, res) => {
     role,
     bio,
     profilePicture,
+    apiKey: crypto.randomBytes(32).toString("hex"),
   });
+
   try {
     const newUser = await user.save();
     res.status(201).json(newUser);

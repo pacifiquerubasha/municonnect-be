@@ -18,7 +18,9 @@ const userSchema = new mongoose.Schema({
     status: { type: Boolean, default: false },
     reason: { type: String },
   },
+  apiKey: { type: String, unique: true },
   createdAt: { type: Date, default: Date.now },
 });
+
 
 module.exports = mongoose.model("User", userSchema);

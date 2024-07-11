@@ -9,12 +9,13 @@ const authMiddleware = async (req, res, next) => {
 
     if (!user) {
       throw new Error();
+    } else if (user?.isBanned?.status) {
+      res.status(401).json({
+        message:
+          "Your account has been banned. Please contact Support for help.",
+      });
     }
-    
-    else if(user?.isBanned?.status){
-    	res.status(401).json({ message: "Your account has been banned. Please contact Support for help." });
-    }
-        
+
     req.user = user;
     next();
   } catch (error) {
@@ -31,9 +32,7 @@ const adminMiddleware = async (req, res, next) => {
 
     if (!user) {
       throw new Error();
-    }
-
-    else if (user.role !== "admin") {
+    } else if (user.role !== "admin") {
       res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -44,5 +43,25 @@ const adminMiddleware = async (req, res, next) => {
   }
 };
 
+const authenticateApiKey = async (req, res, next) => {
+  try {
+    const apiKey = req.headers["x-api-key"];
 
-module.exports = { authMiddleware, adminMiddleware };
+    if (!apiKey) {
+      throw new Error();
+    }
+
+    const user = await User.findOne({ apiKey });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid API key" });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "API key required" });
+  }
+};
+
+module.exports = { authMiddleware, adminMiddleware, authenticateApiKey };

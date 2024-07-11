@@ -12,7 +12,7 @@ const datasetSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       type: { type: String, required: true },
-      desc: { type: String},
+      desc: { type: String },
     },
   ],
   files: {
@@ -21,15 +21,32 @@ const datasetSchema = new mongoose.Schema({
   },
   numRows: { type: Number, required: true },
   numColumns: { type: Number, required: true },
-  fileSize: { type: Number, required: true },  
+  fileSize: { type: Number, required: true },
   associatedArticles: [String],
   domain: { type: String, required: true },
-  rating: { type: Number, default: 0 },
+  ratings: { type: [Number] },
   language: { type: String, required: true },
   isPrivate: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: true },
   reasonForRemoval: { type: String },
   summary: { type: String },
+  downloads: {
+    type: Number,
+    default: 0,
+  },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+datasetSchema.virtual("averageRating").get(function () {
+  if (this.ratings.length === 0) return 0;
+  const sum = this.ratings.reduce((acc, rating) => acc + rating, 0);
+  return sum / this.ratings.length;
+});
+
+datasetSchema.set("toJSON", { virtuals: true });
+datasetSchema.set("toObject", { virtuals: true });
 
 module.exports = mongoose.model("Dataset", datasetSchema);
