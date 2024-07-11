@@ -38,6 +38,7 @@ const datasetSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  sampleQuestions: [String],
 });
 
 datasetSchema.virtual("averageRating").get(function () {
