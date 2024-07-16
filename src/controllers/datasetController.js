@@ -62,8 +62,9 @@ exports.getMyDatasets = async (req, res) => {
 };
 
 exports.getAllDatasets = async (req, res) => {
-  try {
-    const datasets = await Dataset.find({ isPrivate: false });
+  try {    
+    const datasets = await Dataset.find();
+
     res.status(200).json(datasets);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -77,7 +78,7 @@ exports.getDataset = async (req, res) => {
       model: "User",
       localField: "owner",
       foreignField: "authId",
-      select: "fullName email username",
+      select: "fullName email username isVerified",
       as: "owner",
     });
     if (!dataset) {
