@@ -27,4 +27,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f municonnect-be-container
       - name: Run Docker Container
-        run: docker run -d -p 8000:8000 --name municonnect-be-container -e MONGO_URI='${{ secrets.MONGO_URI }}' pacifiquerubasha/municonnect-be
+        run: docker run -d -p 8000:8000 --name municonnect-be-container -e MONGO_URI='${{ secrets.MONGO_URI }}' -e FRONTEND_URL='${{ secrets.FRONTEND_URL }}' pacifiquerubasha/municonnect-be
