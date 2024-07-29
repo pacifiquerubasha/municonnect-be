@@ -5,20 +5,9 @@ const Message = require("../models/Message");
 
 exports.createDataset = async (req, res) => {
   const {
-    title,
-    numRows,
-    numColumns,
-    fileSize,
-    fields,
-    description,
-    tags,
-    domain,
-    language,
-    isPrivate,
-    licence,
-    releaseDate,
-    mainFile,
-  } = req.body;
+    title,    numRows,    numColumns,    fileSize,    fields,    description,
+    tags,    domain,    language,    isPrivate,    licence,    releaseDate,
+    mainFile,  } = req.body;
 
   const owner = req.user.authId;
 
@@ -112,12 +101,15 @@ exports.generateFileSummary = async (req, res) => {
     if (!dataset) {
       return res.status(404).json({ message: "Dataset not found" });
     }
-
     const fileName = dataset.files.mainFile.split("/").pop();
+
+    //Call the AI service to generate the summary
     const response = await axios.post("http://localhost:8080/process_summary", {
       file_name: fileName,
       domain: dataset.domain,
     });
+
+    // Check if the response is successful
     if (response.data) {
       dataset.summary = response.data.summary;
       await dataset.save();
